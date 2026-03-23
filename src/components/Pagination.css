@@ -1,0 +1,38 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.pagination-btn.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
