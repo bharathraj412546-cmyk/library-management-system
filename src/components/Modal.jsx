@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdClose } from 'react-icons/md';
+import { FiX } from 'react-icons/fi';
 import './Modal.css';
 
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -10,8 +10,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
       <div className="modal-content fade-in" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{title}</h2>
-          <button className="close-btn" onClick={onClose}>
-            <MdClose size={24} />
+          <button className="close-btn" onClick={onClose} title="Close">
+            <FiX size={20} />
           </button>
         </div>
         <div className="modal-body">

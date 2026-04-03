@@ -4,59 +4,96 @@
   gap: 2rem;
 }
 
+.dashboard {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.page-header {
+  margin-bottom: 3rem;
+}
+
 .page-header h1 {
-  margin-bottom: 0.25rem;
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .page-header p {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.dashboard-content {
-  margin-top: 1rem;
+.dashboard-sections {
+  margin-top: 3.5rem;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-primary);
+}
+
+.section-icon {
+  color: var(--primary);
 }
 
 .section-header h3 {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   margin-bottom: 0;
-}
-
-.btn-text {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-weight: 600;
-  padding: 0;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.8rem;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
-.status-badge.issued {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: var(--warning);
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
 }
 
-.status-badge.returned {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: var(--success);
+/* Status Pills */
+.status-pill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
 }
 
-@media (max-width: 1024px) {
+.status-pill.issued {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+
+.status-pill.returned {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.font-medium {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+.table-wrapper {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+@media (max-width: 1280px) {
   .grid-cols-4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

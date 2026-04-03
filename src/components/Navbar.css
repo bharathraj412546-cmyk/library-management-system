@@ -1,11 +1,11 @@
 .navbar {
-  height: 70px;
+  height: 80px;
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
   transition: var(--transition);
   position: sticky;
   top: 0;
@@ -16,12 +16,19 @@
   display: flex;
   align-items: center;
   background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  width: 400px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 0.625rem 1.25rem;
+  width: 450px;
   gap: 0.75rem;
   color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.navbar-search:focus-within {
+  background-color: var(--card-bg);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-soft);
 }
 
 .navbar-search input {
@@ -30,10 +37,13 @@
   width: 100%;
   margin-bottom: 0;
   padding: 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .navbar-search input:focus {
   outline: none;
+  box-shadow: none;
 }
 
 .navbar-actions {
@@ -42,58 +52,72 @@
   gap: 1.5rem;
 }
 
-.theme-toggle {
+.theme-toggle, .navbar-icon {
   background: none;
   border: none;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
+  padding: 0.625rem;
   border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover, .navbar-icon:hover {
   background-color: var(--bg-color);
+  color: var(--text-primary);
 }
 
 .navbar-icon {
   position: relative;
-  cursor: pointer;
-  color: var(--text-secondary);
 }
 
 .badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: 4px;
+  right: 4px;
   background-color: var(--danger);
   color: white;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   padding: 2px 5px;
-  border-radius: 50%;
+  border-radius: 20px;
   font-weight: 700;
+  border: 2px solid var(--card-bg);
 }
 
 .navbar-profile {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-weight: 500;
+  gap: 0.875rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
+  padding-left: 0.5rem;
 }
 
 .navbar-profile img {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .navbar-search {
+    width: 300px;
+  }
 }
 
 @media (max-width: 768px) {
   .navbar-search {
-    width: 150px;
+    width: 200px;
   }
   .navbar-profile span {
     display: none;
+  }
+  .navbar {
+    padding: 0 1.5rem;
   }
 }

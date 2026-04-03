@@ -3,7 +3,7 @@ import { useLibrary } from '../context/LibraryContext';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
-import { MdAdd, MdEdit, MdDelete, MdSearch, MdEmail, MdPerson } from 'react-icons/md';
+import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiMail, FiUser } from 'react-icons/fi';
 import './Users.css';
 
 const Users = () => {
@@ -12,7 +12,7 @@ const Users = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -62,62 +62,67 @@ const Users = () => {
   return (
     <div className="users-page">
       <div className="page-header">
-        <div>
-          <h1>Users Management</h1>
-          <p>Manage library members and their details.</p>
+        <div className="header-text">
+          <h1>Member Directory</h1>
+          <p>Manage and track all registered library members.</p>
         </div>
         <button className="btn-primary" onClick={() => handleOpenModal()}>
-          <MdAdd /> Add New User
+          <FiPlus /> Register Member
         </button>
       </div>
 
-      <div className="table-controls">
-        <div className="search-box">
-          <MdSearch />
+      <div className="search-controls">
+        <div className="search-bar">
+          <FiSearch className="search-icon" />
           <input 
             type="text" 
-            placeholder="Search by name or email..." 
+            placeholder="Search by name, email, or ID..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      <Table 
-        headers={['Name', 'Email', 'ID', 'Actions']}
-        data={displayedUsers}
-        renderRow={(user) => (
-          <tr key={user.id}>
-            <td>
-              <div className="user-info">
-                <div className="user-avatar">
-                  <MdPerson />
+      <div className="table-wrapper-main">
+        <Table 
+          headers={['Member Name', 'Contact Info', 'Member ID', 'Actions']}
+          data={displayedUsers}
+          renderRow={(user) => (
+            <tr key={user.id}>
+              <td>
+                <div className="user-profile-cell">
+                  <div className="user-avatar-small">
+                    <FiUser size={14} />
+                  </div>
+                  <span className="user-name-text">{user.name}</span>
                 </div>
-                <strong>{user.name}</strong>
-              </div>
-            </td>
-            <td>
-              <div className="email-link">
-                <MdEmail /> {user.email}
-              </div>
-            </td>
-            <td>#USR-{user.id}</td>
-            <td>
-              <div className="action-buttons">
-                <button className="btn-icon edit" onClick={() => handleOpenModal(user)}>
-                  <MdEdit />
-                </button>
-                <button className="btn-icon delete" onClick={() => {
-                  setUserToDelete(user);
-                  setIsDeleteModalOpen(true);
-                }}>
-                  <MdDelete />
-                </button>
-              </div>
-            </td>
-          </tr>
-        )}
-      />
+              </td>
+              <td>
+                <div className="user-email-cell">
+                  <FiMail size={14} className="email-icon" />
+                  <span>{user.email}</span>
+                </div>
+              </td>
+              <td>
+                <code className="user-id-badge">#USR-{user.id}</code>
+              </td>
+              <td>
+                <div className="action-buttons">
+                  <button className="btn-icon" onClick={() => handleOpenModal(user)} title="Edit Member">
+                    <FiEdit2 size={16} />
+                  </button>
+                  <button className="btn-icon delete" onClick={() => {
+                    setUserToDelete(user);
+                    setIsDeleteModalOpen(true);
+                  }} title="Remove Member">
+                    <FiTrash2 size={16} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          )}
+        />
+      </div>
 
       <Pagination 
         currentPage={currentPage}
@@ -129,29 +134,35 @@ const Users = () => {
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        title={editingUser ? 'Edit User' : 'Add New User'}
+        title={editingUser ? 'Update Member Profile' : 'Register New Member'}
       >
         <form onSubmit={handleSubmit} className="user-form">
-          <label>Full Name</label>
-          <input 
-            type="text" 
-            required 
-            value={formData.name}
-            onChange={e => setFormData({...formData, name: e.target.value})}
-          />
+          <div className="form-field">
+            <label>Full Name</label>
+            <input 
+              type="text" 
+              required 
+              placeholder="e.g. John Doe"
+              value={formData.name}
+              onChange={e => setFormData({...formData, name: e.target.value})}
+            />
+          </div>
           
-          <label>Email Address</label>
-          <input 
-            type="email" 
-            required 
-            value={formData.email}
-            onChange={e => setFormData({...formData, email: e.target.value})}
-          />
+          <div className="form-field">
+            <label>Email Address</label>
+            <input 
+              type="email" 
+              required 
+              placeholder="e.g. john@example.com"
+              value={formData.email}
+              onChange={e => setFormData({...formData, email: e.target.value})}
+            />
+          </div>
           
-          <div className="modal-footer">
+          <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
             <button type="submit" className="btn-primary">
-              {editingUser ? 'Update User' : 'Add User'}
+              {editingUser ? 'Save Updates' : 'Complete Registration'}
             </button>
           </div>
         </form>
@@ -161,12 +172,14 @@ const Users = () => {
       <Modal 
         isOpen={isDeleteModalOpen} 
         onClose={() => setIsDeleteModalOpen(false)}
-        title="Confirm Delete"
+        title="Confirm Removal"
       >
-        <p>Are you sure you want to delete user <strong>{userToDelete?.name}</strong>? All their transaction history will be affected.</p>
-        <div className="modal-footer">
-          <button className="btn-secondary" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
-          <button className="btn-danger" onClick={handleDelete}>Delete User</button>
+        <div className="delete-confirmation">
+          <p>Are you sure you want to remove member <strong>{userToDelete?.name}</strong>? All associated history will be impacted.</p>
+          <div className="modal-actions">
+            <button className="btn-secondary" onClick={() => setIsDeleteModalOpen(false)}>Dismiss</button>
+            <button className="btn-danger" onClick={handleDelete}>Confirm Removal</button>
+          </div>
         </div>
       </Modal>
     </div>

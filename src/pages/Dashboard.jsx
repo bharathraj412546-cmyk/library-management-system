@@ -2,7 +2,7 @@ import React from 'react';
 import { useLibrary } from '../context/LibraryContext';
 import Card from '../components/Card';
 import Table from '../components/Table';
-import { MdLibraryBooks, MdPeople, MdAssignmentTurnedIn, MdHistory } from 'react-icons/md';
+import { FiBook, FiUsers, FiCheckCircle, FiActivity, FiArrowRight } from 'react-icons/fi';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -21,64 +21,73 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <div className="page-header">
-        <h1>Library Dashboard</h1>
-        <p>Welcome back, here's what's happening today.</p>
+        <div className="header-text">
+          <h1>Overview</h1>
+          <p>Real-time statistics for your library management system.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-4">
         <Card 
           title="Total Books" 
           value={totalBooks} 
-          icon={<MdLibraryBooks />} 
+          icon={<FiBook />} 
           trend={12} 
-          color="#4f46e5" 
+          color="#3b82f6" 
         />
         <Card 
           title="Issued Books" 
           value={issuedBooks} 
-          icon={<MdAssignmentTurnedIn />} 
+          icon={<FiActivity />} 
           trend={5} 
           color="#f59e0b" 
         />
         <Card 
           title="Available Books" 
           value={availableBooks} 
-          icon={<MdAssignmentTurnedIn />} 
+          icon={<FiCheckCircle />} 
           trend={-2} 
           color="#10b981" 
         />
         <Card 
           title="Total Users" 
           value={users.length} 
-          icon={<MdPeople />} 
+          icon={<FiUsers />} 
           trend={8} 
-          color="#3b82f6" 
+          color="#8b5cf6" 
         />
       </div>
 
-      <div className="dashboard-content grid grid-cols-1">
-        <div className="recent-activity">
+      <div className="dashboard-sections">
+        <div className="recent-activity-section">
           <div className="section-header">
-            <h3><MdHistory /> Recent Activity</h3>
-            <button className="btn-text">View All</button>
+            <div className="section-title">
+              <FiActivity className="section-icon" />
+              <h3>Recent Activity</h3>
+            </div>
+            <button className="btn-secondary btn-sm">
+              View Analytics <FiArrowRight size={14} />
+            </button>
           </div>
           
-          <Table 
-            headers={['Book', 'User', 'Date', 'Status']}
-            data={recentTransactions}
-            renderRow={(item) => (
-              <tr key={item.id}>
-                <td>{getBookTitle(item.bookId)}</td>
-                <td>{getUserName(item.userId)}</td>
-                <td>{item.issueDate}</td>
-                <td>
-                  <span className={`status-badge ${item.status.toLowerCase()}`}>
-                    {item.status}
-                  </span>
-                </td>
-              </tr>
-            )}
-          />
+          <div className="table-wrapper">
+            <Table 
+              headers={['Book Name', 'Customer', 'Date Issued', 'Status']}
+              data={recentTransactions}
+              renderRow={(item) => (
+                <tr key={item.id}>
+                  <td className="font-medium">{getBookTitle(item.bookId)}</td>
+                  <td>{getUserName(item.userId)}</td>
+                  <td className="text-muted">{item.issueDate}</td>
+                  <td>
+                    <span className={`status-pill ${item.status.toLowerCase()}`}>
+                      {item.status}
+                    </span>
+                  </td>
+                </tr>
+              )}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './Pagination.css';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
@@ -13,8 +13,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         className="pagination-btn" 
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
+        title="Previous Page"
       >
-        <MdChevronLeft size={20} />
+        <FiChevronLeft size={18} />
       </button>
 
       {pages.map(page => (
@@ -31,8 +32,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         className="pagination-btn" 
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        title="Next Page"
       >
-        <MdChevronRight size={20} />
+        <FiChevronRight size={18} />
       </button>
     </div>
   );

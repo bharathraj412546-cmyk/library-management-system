@@ -3,28 +3,23 @@ import { useLibrary } from '../context/LibraryContext';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
-import { MdAdd, MdEdit, MdDelete, MdSearch, MdFilterList } from 'react-icons/md';
+import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiFilter } from 'react-icons/fi';
 import './Books.css';
 
 const Books = () => {
   const { state, dispatch } = useLibrary();
   const { books } = state;
 
-  // State for search and filter
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
-  
-  // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
-  // State for Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
 
-  // Form State
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -32,7 +27,6 @@ const Books = () => {
     quantity: 1
   });
 
-  // Filter and Search Logic
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          book.author.toLowerCase().includes(searchTerm.toLowerCase());
@@ -40,7 +34,6 @@ const Books = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Pagination Logic
   const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
   const displayedBooks = filteredBooks.slice(
     (currentPage - 1) * itemsPerPage,
@@ -84,28 +77,28 @@ const Books = () => {
   return (
     <div className="books-page">
       <div className="page-header">
-        <div>
-          <h1>Books Management</h1>
-          <p>Manage your library's collection of books.</p>
+        <div className="header-text">
+          <h1>Books Collection</h1>
+          <p>Organize and manage your library's assets efficiently.</p>
         </div>
         <button className="btn-primary" onClick={() => handleOpenModal()}>
-          <MdAdd /> Add New Book
+          <FiPlus /> Add New Record
         </button>
       </div>
 
-      <div className="table-controls">
-        <div className="search-box">
-          <MdSearch />
+      <div className="inventory-controls">
+        <div className="search-bar">
+          <FiSearch className="search-icon" />
           <input 
             type="text" 
-            placeholder="Search by title or author..." 
+            placeholder="Search by title, author, or ISBN..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         
-        <div className="filter-box">
-          <MdFilterList />
+        <div className="filter-dropdown">
+          <FiFilter className="filter-icon" />
           <select 
             value={filterCategory} 
             onChange={(e) => setFilterCategory(e.target.value)}
@@ -117,36 +110,44 @@ const Books = () => {
         </div>
       </div>
 
-      <Table 
-        headers={['Title', 'Author', 'Category', 'Qty', 'Avail', 'Actions']}
-        data={displayedBooks}
-        renderRow={(book) => (
-          <tr key={book.id}>
-            <td><strong>{book.title}</strong></td>
-            <td>{book.author}</td>
-            <td><span className="category-tag">{book.category}</span></td>
-            <td>{book.quantity}</td>
-            <td>
-              <span className={`stock-status ${book.available > 0 ? 'instock' : 'outstock'}`}>
-                {book.available}
-              </span>
-            </td>
-            <td>
-              <div className="action-buttons">
-                <button className="btn-icon edit" onClick={() => handleOpenModal(book)}>
-                  <MdEdit />
-                </button>
-                <button className="btn-icon delete" onClick={() => {
-                  setBookToDelete(book);
-                  setIsDeleteModalOpen(true);
-                }}>
-                  <MdDelete />
-                </button>
-              </div>
-            </td>
-          </tr>
-        )}
-      />
+      <div className="table-wrapper-main">
+        <Table 
+          headers={['Book Information', 'Category', 'Quantity', 'Stock Status', 'Actions']}
+          data={displayedBooks}
+          renderRow={(book) => (
+            <tr key={book.id}>
+              <td>
+                <div className="book-info-cell">
+                  <span className="book-title-main">{book.title}</span>
+                  <span className="book-author-sub">{book.author}</span>
+                </div>
+              </td>
+              <td>
+                <span className="category-pill">{book.category}</span>
+              </td>
+              <td className="text-center">{book.quantity}</td>
+              <td>
+                <span className={`stock-indicator ${book.available > 0 ? 'in-stock' : 'low-stock'}`}>
+                  {book.available} Available
+                </span>
+              </td>
+              <td>
+                <div className="action-buttons">
+                  <button className="btn-icon" onClick={() => handleOpenModal(book)} title="Edit Record">
+                    <FiEdit2 size={16} />
+                  </button>
+                  <button className="btn-icon delete" onClick={() => {
+                    setBookToDelete(book);
+                    setIsDeleteModalOpen(true);
+                  }} title="Delete Record">
+                    <FiTrash2 size={16} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          )}
+        />
+      </div>
 
       <Pagination 
         currentPage={currentPage}
@@ -158,37 +159,44 @@ const Books = () => {
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        title={editingBook ? 'Edit Book' : 'Add New Book'}
+        title={editingBook ? 'Update Book Details' : 'Register New Book'}
       >
         <form onSubmit={handleSubmit} className="book-form">
-          <label>Book Title</label>
-          <input 
-            type="text" 
-            required 
-            value={formData.title}
-            onChange={e => setFormData({...formData, title: e.target.value})}
-          />
+          <div className="form-field">
+            <label>Title</label>
+            <input 
+              type="text" 
+              required 
+              placeholder="e.g. The Great Gatsby"
+              value={formData.title}
+              onChange={e => setFormData({...formData, title: e.target.value})}
+            />
+          </div>
           
-          <label>Author</label>
-          <input 
-            type="text" 
-            required 
-            value={formData.author}
-            onChange={e => setFormData({...formData, author: e.target.value})}
-          />
+          <div className="form-field">
+            <label>Author</label>
+            <input 
+              type="text" 
+              required 
+              placeholder="e.g. F. Scott Fitzgerald"
+              value={formData.author}
+              onChange={e => setFormData({...formData, author: e.target.value})}
+            />
+          </div>
           
-          <div className="form-row">
-            <div className="form-group">
+          <div className="form-grid">
+            <div className="form-field">
               <label>Category</label>
               <input 
                 type="text" 
                 required 
+                placeholder="e.g. Fiction"
                 value={formData.category}
                 onChange={e => setFormData({...formData, category: e.target.value})}
               />
             </div>
-            <div className="form-group">
-              <label>Quantity</label>
+            <div className="form-field">
+              <label>Inventory Count</label>
               <input 
                 type="number" 
                 required 
@@ -199,10 +207,10 @@ const Books = () => {
             </div>
           </div>
           
-          <div className="modal-footer">
+          <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
             <button type="submit" className="btn-primary">
-              {editingBook ? 'Update Book' : 'Add Book'}
+              {editingBook ? 'Save Changes' : 'Initialize Record'}
             </button>
           </div>
         </form>
@@ -212,12 +220,14 @@ const Books = () => {
       <Modal 
         isOpen={isDeleteModalOpen} 
         onClose={() => setIsDeleteModalOpen(false)}
-        title="Confirm Delete"
+        title="Confirm Deletion"
       >
-        <p>Are you sure you want to delete <strong>{bookToDelete?.title}</strong>? This action cannot be undone.</p>
-        <div className="modal-footer">
-          <button className="btn-secondary" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
-          <button className="btn-danger" onClick={handleDelete}>Delete Book</button>
+        <div className="delete-confirmation">
+          <p>This action will permanently remove <strong>{bookToDelete?.title}</strong> from the database. This cannot be undone.</p>
+          <div className="modal-actions">
+            <button className="btn-secondary" onClick={() => setIsDeleteModalOpen(false)}>Dismiss</button>
+            <button className="btn-danger" onClick={handleDelete}>Confirm Delete</button>
+          </div>
         </div>
       </Modal>
     </div>

@@ -3,7 +3,7 @@ import { useLibrary } from '../context/LibraryContext';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
-import { MdSwapHoriz, MdAdd, MdHistory, MdAssignmentReturn, MdSearch } from 'react-icons/md';
+import { FiPlus, FiClock, FiCheckCircle, FiSearch, FiRepeat } from 'react-icons/fi';
 import './Transactions.css';
 
 const Transactions = () => {
@@ -62,111 +62,123 @@ const Transactions = () => {
   return (
     <div className="transactions-page">
       <div className="page-header">
-        <div>
-          <h1>Issue / Return Books</h1>
-          <p>Track book assignments and manage returns.</p>
+        <div className="header-text">
+          <h1>Lending Services</h1>
+          <p>Monitor book circulations and manage member returns.</p>
         </div>
         <button className="btn-primary" onClick={() => setIsIssueModalOpen(true)}>
-          <MdAdd /> Issue New Book
+          <FiPlus /> Issue New Book
         </button>
       </div>
 
-      <div className="table-controls">
-        <div className="search-box">
-          <MdSearch />
+      <div className="circulation-controls">
+        <div className="search-bar">
+          <FiSearch className="search-icon" />
           <input 
             type="text" 
-            placeholder="Search by book or user..." 
+            placeholder="Search by book title or member name..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="transactions-content">
-        <div className="section-title">
-          <MdHistory /> Transaction History
+      <div className="table-wrapper-main">
+        <div className="section-header-lite">
+          <FiRepeat size={14} />
+          <span>Active & Historical Records</span>
         </div>
         
         <Table 
-          headers={['Book', 'Issued To', 'Issue Date', 'Due Date', 'Status', 'Actions']}
+          headers={['Book Asset', 'Borrowed By', 'Timeline', 'Status', 'Actions']}
           data={displayedTransactions}
           renderRow={(t) => (
             <tr key={t.id}>
-              <td><strong>{getBookTitle(t.bookId)}</strong></td>
+              <td>
+                <div className="asset-cell">
+                  <strong>{getBookTitle(t.bookId)}</strong>
+                </div>
+              </td>
               <td>{getUserName(t.userId)}</td>
-              <td>{t.issueDate}</td>
-              <td className={new Date(t.dueDate) < new Date() && t.status === 'Issued' ? 'overdue' : ''}>
-                {t.dueDate}
+              <td>
+                <div className="timeline-cell">
+                  <span className="date-main">Due: {t.dueDate}</span>
+                  <span className="date-sub">Issued: {t.issueDate}</span>
+                </div>
               </td>
               <td>
-                <span className={`status-badge ${t.status.toLowerCase()}`}>
+                <span className={`status-pill ${t.status.toLowerCase()}`}>
                   {t.status}
                 </span>
               </td>
               <td>
-                {t.status === 'Issued' && (
-                  <button className="btn-return" onClick={() => handleReturnBook(t.id)}>
-                    <MdAssignmentReturn /> Return
+                {t.status === 'Issued' ? (
+                  <button className="btn-action-return" onClick={() => handleReturnBook(t.id)}>
+                    <FiCheckCircle size={14} /> Mark Returned
                   </button>
-                )}
-                {t.status === 'Returned' && (
-                  <span className="return-date">Returned on {t.returnDate}</span>
+                ) : (
+                  <span className="return-timestamp">Returned on {t.returnDate}</span>
                 )}
               </td>
             </tr>
           )}
         />
-
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {/* Issue Book Modal */}
       <Modal 
         isOpen={isIssueModalOpen} 
         onClose={() => setIsIssueModalOpen(false)}
-        title="Issue New Book"
+        title="Issue Asset to Member"
       >
         <form onSubmit={handleIssueBook} className="issue-form">
-          <label>Select User</label>
-          <select 
-            required 
-            value={issueData.userId}
-            onChange={e => setIssueData({...issueData, userId: e.target.value})}
-          >
-            <option value="">-- Choose User --</option>
-            {users.map(user => (
-              <option key={user.id} value={user.id}>{user.name} ({user.email})</option>
-            ))}
-          </select>
+          <div className="form-field">
+            <label>Member Selection</label>
+            <select 
+              required 
+              value={issueData.userId}
+              onChange={e => setIssueData({...issueData, userId: e.target.value})}
+            >
+              <option value="">-- Choose Member --</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id}>{user.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <label>Select Book</label>
-          <select 
-            required 
-            value={issueData.bookId}
-            onChange={e => setIssueData({...issueData, bookId: e.target.value})}
-          >
-            <option value="">-- Choose Book --</option>
-            {books.filter(b => b.available > 0).map(book => (
-              <option key={book.id} value={book.id}>{book.title} ({book.available} available)</option>
-            ))}
-          </select>
+          <div className="form-field">
+            <label>Asset Selection</label>
+            <select 
+              required 
+              value={issueData.bookId}
+              onChange={e => setIssueData({...issueData, bookId: e.target.value})}
+            >
+              <option value="">-- Choose Book --</option>
+              {books.filter(b => b.available > 0).map(book => (
+                <option key={book.id} value={book.id}>{book.title} ({book.available} in stock)</option>
+              ))}
+            </select>
+          </div>
 
-          <label>Due Date</label>
-          <input 
-            type="date" 
-            required 
-            value={issueData.dueDate}
-            onChange={e => setIssueData({...issueData, dueDate: e.target.value})}
-          />
+          <div className="form-field">
+            <label>Due Date</label>
+            <input 
+              type="date" 
+              required 
+              value={issueData.dueDate}
+              onChange={e => setIssueData({...issueData, dueDate: e.target.value})}
+            />
+          </div>
 
-          <div className="modal-footer">
+          <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={() => setIsIssueModalOpen(false)}>Cancel</button>
-            <button type="submit" className="btn-primary">Issue Book</button>
+            <button type="submit" className="btn-primary">Initialize Lending</button>
           </div>
         </form>
       </Modal>
